@@ -18,7 +18,8 @@ public class StudentSchoolServiceImpl implements SchoolService<Student> {
     @Override
     public Student create(Student student) {
         student.setId(++id);
-        return students.put(student.getId(), student);
+        students.put(student.getId(), student);
+        return student;
     }
 
     @Override
@@ -33,11 +34,15 @@ public class StudentSchoolServiceImpl implements SchoolService<Student> {
 
     @Override
     public Student update(Student student) {
-        return students.put(student.getId(), student);
+        return students.computeIfPresent(student.getId(), (k, v) -> v = student);
     }
 
     @Override
     public Map<Long, Student> byFilter(Object age) {
+        if (age.getClass() != Integer.class) {
+            String error = String.format("метод byFilter ожидает int. Передан %s", age.getClass());
+            throw new IllegalArgumentException(error);
+        }
         int finalAge = (int) age;
         return students.values().stream()
                 .filter(v -> v.getAge() == finalAge)

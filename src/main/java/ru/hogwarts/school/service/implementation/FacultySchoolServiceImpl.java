@@ -18,7 +18,8 @@ public class FacultySchoolServiceImpl implements SchoolService<Faculty> {
     @Override
     public Faculty create(Faculty faculty) {
         faculty.setId(++id);
-        return facultys.put(faculty.getId(), faculty);
+        facultys.put(faculty.getId(), faculty);
+        return faculty;
     }
 
     @Override
@@ -33,11 +34,15 @@ public class FacultySchoolServiceImpl implements SchoolService<Faculty> {
 
     @Override
     public Faculty update(Faculty faculty) {
-        return facultys.put(id, faculty);
+        return facultys.computeIfPresent(faculty.getId(), (k, v) -> v = faculty);
     }
 
     @Override
     public Map<Long, Faculty> byFilter(Object color) {
+        if (color.getClass() != String.class) {
+            String error = String.format("метод byFilter ожидает строку. Передан %s", color.getClass());
+            throw new IllegalArgumentException(error);
+        }
         return facultys.values().stream()
                 .filter(v -> v.getColor().equals(color))
                 .collect(Collectors.toMap(Faculty::getId, v -> v));
