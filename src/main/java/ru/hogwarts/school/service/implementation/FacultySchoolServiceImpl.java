@@ -34,7 +34,7 @@ public class FacultySchoolServiceImpl implements SchoolService<Faculty> {
 
     @Override
     public Faculty update(Faculty faculty) {
-        return facultys.computeIfPresent(faculty.getId(), (k, v) -> v = faculty);
+        return facultys.computeIfPresent(faculty.getId(), (k, v) -> faculty);
     }
 
     @Override

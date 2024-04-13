@@ -34,7 +34,7 @@ public class StudentSchoolServiceImpl implements SchoolService<Student> {
 
     @Override
     public Student update(Student student) {
-        return students.computeIfPresent(student.getId(), (k, v) -> v = student);
+        return students.computeIfPresent(student.getId(), (k,v) -> student);
     }
 
     @Override
