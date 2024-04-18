@@ -1,20 +1,19 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.service.SchoolService;
+import ru.hogwarts.school.service.implementation.StudentSchoolServiceImpl;
 
-import java.util.Map;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("students")
 public class StudentController {
-    private final SchoolService<Student> schoolService;
+    private final StudentSchoolServiceImpl schoolService;
 
-    public StudentController(@Qualifier("StudentSchoolServiceImpl") SchoolService<Student> schoolService) {
+    public StudentController(StudentSchoolServiceImpl schoolService) {
         this.schoolService = schoolService;
     }
 
@@ -30,8 +29,8 @@ public class StudentController {
     }
 
     @GetMapping("/age/{age}")
-    public ResponseEntity<Map<Long, Student>> filterByColor(@PathVariable("age") Integer age) {
-        Map<Long, Student> result = schoolService.byFilter(age);
+    public ResponseEntity<Collection<Student>> filterByColor(@PathVariable("age") Integer age) {
+        Collection<Student> result = schoolService.filterByAge(age);
         if (result == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -46,19 +45,24 @@ public class StudentController {
 
     @PutMapping
     public ResponseEntity<Student> editStudent(Student student) {
-        Student editStudent = schoolService.update(student);
-        if (editStudent == null) {
+        Student result;
+        try {
+            result = schoolService.update(student);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(student);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable("id") long id) {
-        Student student = schoolService.remove(id);
-        if (student == null) {
+        try {
+            schoolService.remove(id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(student);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
