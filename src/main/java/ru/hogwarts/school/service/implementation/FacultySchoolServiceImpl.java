@@ -1,50 +1,50 @@
 package ru.hogwarts.school.service.implementation;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.service.SchoolService;
+import ru.hogwarts.school.repositories.FacultysRepository;
+import ru.hogwarts.school.service.interfaces.SchoolServiceFilterByColor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 @Service
-@Qualifier("FacultySchoolServiceImpl")
-public class FacultySchoolServiceImpl implements SchoolService<Faculty> {
-    private final Map<Long, Faculty> facultys = new HashMap<>();
-    private long id = 0;
+public class FacultySchoolServiceImpl implements SchoolServiceFilterByColor<Faculty> {
+    private final FacultysRepository facultysRepository;
+
+    public FacultySchoolServiceImpl(FacultysRepository facultysRepository) {
+        this.facultysRepository = facultysRepository;
+    }
 
     @Override
     public Faculty create(Faculty faculty) {
-        faculty.setId(++id);
-        facultys.put(faculty.getId(), faculty);
-        return faculty;
+        return facultysRepository.save(faculty);
     }
 
     @Override
     public Faculty get(long id) {
-        return facultys.get(id);
+        return facultysRepository.findById(id).orElseThrow();
     }
 
     @Override
-    public Faculty remove(long id) {
-        return facultys.remove(id);
+    public void remove(long id) {
+        boolean isExsist = facultysRepository.existsById(id);
+        if (!isExsist) {
+            throw new RuntimeException("Такого факультута нет в БД");
+        }
+        facultysRepository.deleteById(id);
     }
 
     @Override
     public Faculty update(Faculty faculty) {
-        return facultys.computeIfPresent(faculty.getId(), (k, v) -> faculty);
+        boolean isExsist = facultysRepository.existsById(faculty.getId());
+        if (!isExsist) {
+            throw new RuntimeException("Такого факультута нет в БД");
+        }
+        return facultysRepository.save(faculty);
     }
 
     @Override
-    public Map<Long, Faculty> byFilter(Object color) {
-        if (color.getClass() != String.class) {
-            String error = String.format("метод byFilter ожидает строку. Передан %s", color.getClass());
-            throw new IllegalArgumentException(error);
-        }
-        return facultys.values().stream()
-                .filter(v -> v.getColor().equals(color))
-                .collect(Collectors.toMap(Faculty::getId, v -> v));
+    public Collection<Faculty> filterByColor(String color) {
+        return facultysRepository.findAllByColor(color);
     }
 }
