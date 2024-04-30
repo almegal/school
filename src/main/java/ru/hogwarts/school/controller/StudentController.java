@@ -29,8 +29,20 @@ public class StudentController {
     }
 
     @GetMapping("/age/{age}")
-    public ResponseEntity<Collection<Student>> filterByColor(@PathVariable("age") Integer age) {
+    public ResponseEntity<Collection<Student>> filterByAge(@PathVariable("age") Integer age) {
         Collection<Student> result = schoolService.filterByAge(age);
+        if (result == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(result);
+
+    }
+
+    @GetMapping("/age/between/{min}&{max}")
+    public ResponseEntity<Collection<Student>> findAgeByAvearega(
+            @PathVariable("min") Integer min,
+            @PathVariable("max") Integer max) {
+        Collection<Student> result = schoolService.findByAgeBetween(min, max);
         if (result == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

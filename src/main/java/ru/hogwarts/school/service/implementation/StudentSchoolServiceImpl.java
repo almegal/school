@@ -3,12 +3,12 @@ package ru.hogwarts.school.service.implementation;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.StudentsRepository;
-import ru.hogwarts.school.service.interfaces.SchoolServiceFilterByAge;
+import ru.hogwarts.school.service.interfaces.SchoolServiceForStudent;
 
 import java.util.Collection;
 
 @Service
-public class StudentSchoolServiceImpl implements SchoolServiceFilterByAge<Student> {
+public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student> {
     private final StudentsRepository studentsRepository;
 
     public StudentSchoolServiceImpl(StudentsRepository studentsRepository) {
@@ -46,5 +46,10 @@ public class StudentSchoolServiceImpl implements SchoolServiceFilterByAge<Studen
     @Override
     public Collection<Student> filterByAge(int age) {
         return studentsRepository.findAllByAge(age);
+    }
+
+    @Override
+    public Collection<Student> findByAgeBetween(int min, int max) {
+        return studentsRepository.findByAgeBetween(min, max);
     }
 }
