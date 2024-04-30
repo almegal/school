@@ -3,12 +3,12 @@ package ru.hogwarts.school.service.implementation;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repositories.FacultysRepository;
-import ru.hogwarts.school.service.interfaces.SchoolServiceFilterByColor;
+import ru.hogwarts.school.service.interfaces.SchoolServiceForFaculty;
 
 import java.util.Collection;
 
 @Service
-public class FacultySchoolServiceImpl implements SchoolServiceFilterByColor<Faculty> {
+public class FacultySchoolServiceImpl implements SchoolServiceForFaculty<Faculty> {
     private final FacultysRepository facultysRepository;
 
     public FacultySchoolServiceImpl(FacultysRepository facultysRepository) {
@@ -44,7 +44,12 @@ public class FacultySchoolServiceImpl implements SchoolServiceFilterByColor<Facu
     }
 
     @Override
-    public Collection<Faculty> filterByColor(String color) {
-        return facultysRepository.findAllByColor(color);
+    public Collection<Faculty> findAllByColorIgnoreCase(String color) {
+        return facultysRepository.findAllByColorIgnoreCase(color);
+    }
+
+    @Override
+    public Faculty findByNameIgnoreCase(String name) {
+        return facultysRepository.findByNameIgnoreCase(name);
     }
 }

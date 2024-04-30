@@ -29,7 +29,17 @@ public class FacultyController {
 
     @GetMapping("/color/{color}")
     public ResponseEntity<Collection<Faculty>> filterByColor(@PathVariable("color") String color) {
-        Collection<Faculty> result = schoolService.filterByColor(color);
+        Collection<Faculty> result = schoolService.findAllByColorIgnoreCase(color);
+        if (result == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(result);
+
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Faculty> getByName(@PathVariable("name") String name) {
+        Faculty result = schoolService.findByNameIgnoreCase(name);
         if (result == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -38,12 +48,12 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty createUser(Faculty faculty) {
+    public Faculty createFaculty(Faculty faculty) {
         return schoolService.create(faculty);
     }
 
     @PutMapping
-    public ResponseEntity<Faculty> editStudent(Faculty faculty) {
+    public ResponseEntity<Faculty> editFaculty(Faculty faculty) {
         Faculty result;
         try {
             result = schoolService.update(faculty);
@@ -55,7 +65,7 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Faculty> deleteStudent(@PathVariable("id") long id) {
+    public ResponseEntity<Faculty> deleteFaculty(@PathVariable("id") long id) {
         try {
             schoolService.remove(id);
         } catch (RuntimeException e) {
