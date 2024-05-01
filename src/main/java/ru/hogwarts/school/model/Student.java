@@ -1,27 +1,33 @@
 package ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties(value = {"faculty", "id"})
 public class Student {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private int age;
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    @JsonBackReference
+    private Faculty faculty;
+
     public Student() {
     }
 
-    public Student(long id, int age, String name) {
-        this.id = id;
+    public Student(int age, String name) {
         this.age = age;
         this.name = name;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -58,5 +64,13 @@ public class Student {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 }
