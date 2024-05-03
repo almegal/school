@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service.implementation;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.FacultysRepository;
@@ -24,14 +25,14 @@ public class FacultySchoolServiceImpl implements SchoolServiceForFaculty<Faculty
 
     @Override
     public Faculty get(long id) {
-        return facultysRepository.findById(id).orElseThrow();
+        return facultysRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Такого факультута нет в БД"));
     }
 
     @Override
     public void remove(long id) {
         boolean isExsist = facultysRepository.existsById(id);
         if (!isExsist) {
-            throw new RuntimeException("Такого факультута нет в БД");
+            throw new EntityNotFoundException("Такого факультута нет в БД");
         }
         facultysRepository.deleteById(id);
     }
@@ -40,7 +41,7 @@ public class FacultySchoolServiceImpl implements SchoolServiceForFaculty<Faculty
     public Faculty update(Faculty faculty) {
         boolean isExsist = facultysRepository.existsById(faculty.getId());
         if (!isExsist) {
-            throw new RuntimeException("Такого факультута нет в БД");
+            throw new EntityNotFoundException("Такого факультута нет в БД");
         }
         return facultysRepository.save(faculty);
     }

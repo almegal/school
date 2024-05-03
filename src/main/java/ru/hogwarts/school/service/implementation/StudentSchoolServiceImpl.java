@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service.implementation;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exception.EntityNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.StudentsRepository;
@@ -23,14 +24,14 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
 
     @Override
     public Student get(long id) {
-        return studentsRepository.findById(id).get();
+        return studentsRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Такого студента нет в БД"));
     }
 
     @Override
     public void remove(long id) {
         boolean isExsist = studentsRepository.existsById(id);
         if (!isExsist) {
-            throw new RuntimeException("Такого студента нет в БД");
+            throw new EntityNotFoundException("Такого студента нет в БД");
         }
         studentsRepository.deleteById(id);
     }
@@ -39,7 +40,7 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
     public Student update(Student student) {
         boolean isExsist = studentsRepository.existsById(student.getId());
         if (!isExsist) {
-            throw new RuntimeException("Такого студента нет в БД");
+            throw new EntityNotFoundException("Такого студента нет в БД");
         }
         return studentsRepository.save(student);
     }
@@ -54,7 +55,7 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
         return studentsRepository.findByAgeBetween(min, max);
     }
 
-    public Faculty getStudentsFaculty(long id){
+    public Faculty getStudentsFaculty(long id) {
         Student student = studentsRepository.findById(id).get();
         return student.getFaculty();
     }

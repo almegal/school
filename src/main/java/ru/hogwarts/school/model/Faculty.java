@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@JsonIgnoreProperties(value = {"students", "id"})
+@JsonIgnoreProperties(value = {"students"})
 public class Faculty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

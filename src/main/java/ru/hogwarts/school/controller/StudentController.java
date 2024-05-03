@@ -55,9 +55,7 @@ public class StudentController {
 
     @GetMapping("/age/between/{min}&{max}")
     @Operation(summary = "Получить всех студентов возрастом между min и max")
-    public ResponseEntity<Collection<Student>> findAgeByAvearega(
-            @PathVariable("min") Integer min,
-            @PathVariable("max") Integer max) {
+    public ResponseEntity<Collection<Student>> findAgeByAvearega(@PathVariable("min") Integer min, @PathVariable("max") Integer max) {
         Collection<Student> result = schoolService.findByAgeBetween(min, max);
         if (result == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -75,25 +73,14 @@ public class StudentController {
     @PutMapping
     @Operation(summary = "Обновить данные студента")
     public ResponseEntity<Student> editStudent(Student student) {
-        Student result;
-        try {
-            result = schoolService.update(student);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Student result = schoolService.update(student);
         return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("{id}")
     @Operation(summary = "Удалить студента по id")
     public ResponseEntity<Student> deleteStudent(@PathVariable("id") long id) {
-        try {
-            schoolService.remove(id);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        schoolService.remove(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

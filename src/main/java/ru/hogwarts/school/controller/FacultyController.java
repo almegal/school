@@ -73,25 +73,14 @@ public class FacultyController {
     @PutMapping
     @Operation(summary = "Обновить факультет")
     public ResponseEntity<Faculty> editFaculty(Faculty faculty) {
-        Faculty result;
-        try {
-            result = schoolService.update(faculty);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Faculty result = schoolService.update(faculty);
         return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("{id}")
     @Operation(summary = "Удалить факультет")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable("id") long id) {
-        try {
-            schoolService.remove(id);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        schoolService.remove(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
