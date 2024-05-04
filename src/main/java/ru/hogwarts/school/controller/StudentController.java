@@ -24,9 +24,6 @@ public class StudentController {
     @Operation(summary = "Получить студента по id")
     public ResponseEntity<Student> get(@PathVariable("id") long id) {
         Student student = schoolService.get(id);
-        if (student == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
         return ResponseEntity.ok(student);
 
     }

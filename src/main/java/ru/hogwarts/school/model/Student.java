@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -27,7 +26,6 @@ public class Student {
         this.age = age;
         this.name = name;
     }
-
 
     @Override
     public boolean equals(Object o) {
