@@ -18,6 +18,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class AvatarService {
+    // получаем путь до аватаров из свойтсв приложения
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
 
@@ -34,17 +35,24 @@ public class AvatarService {
     }
 
     public void uploadAvatar(long id, MultipartFile avatarContent) throws IOException {
+        // получить студента по айди
         Student student = studentSchoolService.get(id);
+        // создаем путь где будут храниться автары
         Path filePath = Path.of(avatarsDir, student.getId() + "." + getExtension(avatarContent.getOriginalFilename()));
+        // создаем директорию
         Files.createDirectories(filePath.getParent());
+        // если такой файл есть - удалить
         Files.deleteIfExists(filePath);
+        // создаем стримы на запись и чтение
         try (InputStream is = avatarContent.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
         ) {
+            // пераем поток чтения в поток на запись
             bis.transferTo(bos);
         }
+        // присваиваем своствам аватара значения и сохраняем в бд
         Avatar avatar = getById(id);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
@@ -59,14 +67,19 @@ public class AvatarService {
     }
 
     private byte[] resizeAvatar(Path path) throws IOException {
+        //создаем стримы на чтение и запись
         try (InputStream is = Files.newInputStream(path);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ) {
+            // получаем буффер изображения
             BufferedImage image = ImageIO.read(bis);
             int height = image.getHeight() / (image.getWidth() / 100);
+            // создаем новый буффер изображения
             BufferedImage preview = new BufferedImage(100, height, image.getType());
+            //  создаем поверхность для рисования
             Graphics2D graphics = preview.createGraphics();
+            // рисуем новое превью
             graphics.drawImage(image, 0, 0, 100, height, null);
             graphics.dispose();
 

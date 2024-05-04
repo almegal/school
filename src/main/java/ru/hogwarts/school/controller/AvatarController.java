@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class AvatarController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить оригинал аватара по id")
     public void getAvatar(
             @PathVariable(value = "id") long id,
             HttpServletResponse response) throws IOException {
@@ -41,6 +43,7 @@ public class AvatarController {
     }
 
     @GetMapping("/{id}/preview")
+    @Operation(summary = "Получить превью автара по id")
     public ResponseEntity<byte[]> getPreview(@PathVariable(value = "id") long id) {
         Avatar avatar = avatarService.getById(id);
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -50,6 +53,7 @@ public class AvatarController {
     }
 
     @PostMapping(value = "/{studentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Загрузить аватар")
     public ResponseEntity<String> postAvatar(
             @PathVariable(value = "studentId") long studentId,
             @RequestParam MultipartFile avatar) throws IOException {
