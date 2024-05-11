@@ -8,6 +8,7 @@ import ru.hogwarts.school.repositories.FacultysRepository;
 import ru.hogwarts.school.service.interfaces.SchoolServiceForFaculty;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 @Service
@@ -59,6 +60,6 @@ public class FacultySchoolServiceImpl implements SchoolServiceForFaculty<Faculty
     @Override
     public Set<Student> getStudentsInFaculty(Long id) {
         Faculty faculty = get(id);
-        return faculty.getStudents();
+        return Collections.unmodifiableSet(faculty.getStudents());
     }
 }

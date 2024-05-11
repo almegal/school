@@ -56,7 +56,7 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
     }
 
     public Faculty getStudentsFaculty(long id) {
-        Student student = studentsRepository.findById(id).get();
+        final Student student = get(id);
         return student.getFaculty();
     }
 }
