@@ -69,7 +69,7 @@ public class StudentController {
 
     @PutMapping
     @Operation(summary = "Обновить данные студента")
-    public ResponseEntity<Student> editStudent(Student student) {
+    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
         Student result = schoolService.update(student);
         return ResponseEntity.ok(result);
     }

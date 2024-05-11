@@ -63,13 +63,13 @@ public class FacultyController {
 
     @PostMapping
     @Operation(summary = "Создать факультет")
-    public Faculty createFaculty(Faculty faculty) {
+    public Faculty createFaculty(@RequestBody Faculty faculty) {
         return schoolService.create(faculty);
     }
 
     @PutMapping
     @Operation(summary = "Обновить факультет")
-    public ResponseEntity<Faculty> editFaculty(Faculty faculty) {
+    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty result = schoolService.update(faculty);
         return ResponseEntity.ok(result);
     }
