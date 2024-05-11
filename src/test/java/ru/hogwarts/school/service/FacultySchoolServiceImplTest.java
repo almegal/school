@@ -28,10 +28,10 @@ public class FacultySchoolServiceImplTest {
 
     @BeforeEach
     void set_up() {
-        DEFAULT_MAPS_OF_FACULTY.put((long) 1, new Faculty(1, "Griffindor", "Red"));
-        DEFAULT_MAPS_OF_FACULTY.put((long) 2, new Faculty(2, "Slytherin", "Red"));
-        DEFAULT_MAPS_OF_FACULTY.put((long) 3, new Faculty(3, "Hufflepufe", "Yellow"));
-        DEFAULT_MAPS_OF_FACULTY.put((long) 4, new Faculty(4, "Ravenclan", "Blue"));
+        DEFAULT_MAPS_OF_FACULTY.put((long) 1, new Faculty("Griffindor", "Red"));
+        DEFAULT_MAPS_OF_FACULTY.put((long) 2, new Faculty("Slytherin", "Red"));
+        DEFAULT_MAPS_OF_FACULTY.put((long) 3, new Faculty("Hufflepufe", "Yellow"));
+        DEFAULT_MAPS_OF_FACULTY.put((long) 4, new Faculty("Ravenclan", "Blue"));
     }
 
 
@@ -93,11 +93,11 @@ public class FacultySchoolServiceImplTest {
     @DisplayName("Редактировать факультет")
     public void editFaculty() {
         // подготовка ожидаемого результата
-        Faculty expected = new Faculty(1, "No Griffindor", "Brown");
+        Faculty expected = new Faculty("No Griffindor", "Brown");
         when(facultysRepository.existsById(anyLong())).thenReturn(true);
         when(facultysRepository.save(any(Faculty.class))).thenReturn(expected);
         // подготовка актуального результата
-        Faculty actual = schoolServiceImpl.update(new Faculty(1, "No Griffindor", "Brown"));
+        Faculty actual = schoolServiceImpl.update(new Faculty("No Griffindor", "Brown"));
         // тест
         assertEquals(expected, actual);
         verify(facultysRepository, times(1)).save(any(Faculty.class));
@@ -126,11 +126,11 @@ public class FacultySchoolServiceImplTest {
         Collection<Faculty> expected = new ArrayList<>();
         expected.add(DEFAULT_MAPS_OF_FACULTY.get((long) 1));
         expected.add(DEFAULT_MAPS_OF_FACULTY.get((long) 2));
-        when(facultysRepository.findAllByColor("Red")).thenReturn(expected);
+        when(facultysRepository.findAllByColorIgnoreCase("Red")).thenReturn(expected);
         // подготовка актуального результата
-        Collection<Faculty> actual = schoolServiceImpl.filterByColor("Red");
+        Collection<Faculty> actual = schoolServiceImpl.findAllByColorIgnoreCase("Red");
         // тест
         assertEquals(expected, actual);
-        verify(facultysRepository, times(1)).findAllByColor("Red");
+        verify(facultysRepository, times(1)).findAllByColorIgnoreCase("Red");
     }
 }

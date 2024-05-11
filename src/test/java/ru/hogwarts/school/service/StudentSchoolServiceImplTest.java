@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.StudentsRepository;
 import ru.hogwarts.school.service.implementation.StudentSchoolServiceImpl;
@@ -29,10 +28,10 @@ public class StudentSchoolServiceImplTest {
 
     @BeforeEach
     void set_up() {
-        DEFAULT_MAPS_OF_STUDENT.put((long) 1, new Student(1, 18, "Harry"));
-        DEFAULT_MAPS_OF_STUDENT.put((long) 2, new Student(2, 20, "Ron"));
-        DEFAULT_MAPS_OF_STUDENT.put((long) 3, new Student(3, 18, "Hermiona"));
-        DEFAULT_MAPS_OF_STUDENT.put((long) 4, new Student(4, 20, "Luna"));
+        DEFAULT_MAPS_OF_STUDENT.put((long) 1, new Student(18, "Harry"));
+        DEFAULT_MAPS_OF_STUDENT.put((long) 2, new Student(20, "Ron"));
+        DEFAULT_MAPS_OF_STUDENT.put((long) 3, new Student(18, "Hermiona"));
+        DEFAULT_MAPS_OF_STUDENT.put((long) 4, new Student(20, "Luna"));
     }
 
 
@@ -95,17 +94,18 @@ public class StudentSchoolServiceImplTest {
     @DisplayName("Редактировать студента")
     public void editFaculty() {
         // подготовка ожидаемого результата
-        Student expected = new Student(1, 19, "Brown");
+        Student expected = new Student(19, "Brown");
         when(studentsRepository.existsById(anyLong())).thenReturn(true);
         when(studentsRepository.save(any(Student.class))).thenReturn(expected);
         // подготовка актуального результата
-        Student actual = schoolServiceImpl.update(new Student(1, 19, "Brown"));
+        Student actual = schoolServiceImpl.update(new Student(19, "Brown"));
         // тест
         assertEquals(expected, actual);
         verify(studentsRepository, times(1)).save(any(Student.class));
         verify(studentsRepository, times(1)).existsById(anyLong());
 
     }
+
     @Test
     @DisplayName("Исключение при редактировании если нет такого студента")
     public void throwWhenTryUpdateFacultyIfNotExsist() {
