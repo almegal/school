@@ -18,12 +18,11 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class AvatarService {
+    private final AvatarRepository avatarRepository;
+    private final StudentSchoolServiceImpl studentSchoolService;
     // получаем путь до аватаров из свойтсв приложения
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
-
-    private AvatarRepository avatarRepository;
-    private StudentSchoolServiceImpl studentSchoolService;
 
     public AvatarService(AvatarRepository avatarRepository, StudentSchoolServiceImpl studentSchoolService) {
         this.avatarRepository = avatarRepository;
@@ -35,6 +34,9 @@ public class AvatarService {
     }
 
     public void uploadAvatar(long id, MultipartFile avatarContent) throws IOException {
+        if (avatarContent.getOriginalFilename() == null) {
+            throw new RuntimeException("");
+        }
         // получить студента по айди
         Student student = studentSchoolService.get(id);
         // создаем путь где будут храниться автары
@@ -47,8 +49,7 @@ public class AvatarService {
         try (InputStream is = avatarContent.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
-        ) {
+             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)) {
             // пераем поток чтения в поток на запись
             bis.transferTo(bos);
         }
@@ -70,8 +71,7 @@ public class AvatarService {
         //создаем стримы на чтение и запись
         try (InputStream is = Files.newInputStream(path);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ) {
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             // получаем буффер изображения
             BufferedImage image = ImageIO.read(bis);
             int height = image.getHeight() / (image.getWidth() / 100);
