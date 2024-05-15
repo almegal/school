@@ -19,7 +19,7 @@ public class StudentController {
         this.schoolService = schoolService;
     }
 
-
+    // ---------------- GET REQUESts ----------- //
     @GetMapping("{id}")
     @Operation(summary = "Получить студента по id")
     public ResponseEntity<Student> get(@PathVariable("id") long id) {
@@ -61,12 +61,44 @@ public class StudentController {
 
     }
 
+    @GetMapping("/count")
+    @Operation(summary = "Количество всех студентов в школе")
+    public ResponseEntity<Integer> getCountStudents() {
+        Integer countStudents = schoolService.getCountStudents();
+        if (countStudents == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(countStudents);
+    }
+
+    @GetMapping("/average-age")
+    @Operation(summary = "Средний возраст студентов университета")
+    public ResponseEntity<Integer> getaverageAgeStudents() {
+        Integer average = schoolService.getaverageAgeStudents();
+        if (average == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(average);
+    }
+
+    @GetMapping("/last-five")
+    @Operation(summary = "Получить 5 последний студентов")
+    public ResponseEntity<Collection<Student>> getLastFiveStudents() {
+        Collection<Student> result = schoolService.getLastFiveStudents();
+        if (result == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ---------------- POST REQUESts ----------- //
     @PostMapping
     @Operation(summary = "Создать нового студента")
     public Student createUser(@RequestBody Student student) {
         return schoolService.create(student);
     }
 
+    // ---------------- PUT REQUESts ----------- //
     @PutMapping
     @Operation(summary = "Обновить данные студента")
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
@@ -74,6 +106,7 @@ public class StudentController {
         return ResponseEntity.ok(result);
     }
 
+    // ---------------- DELEtE REQUESts ----------- //
     @DeleteMapping("{id}")
     @Operation(summary = "Удалить студента по id")
     public ResponseEntity<Student> deleteStudent(@PathVariable("id") long id) {

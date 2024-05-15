@@ -55,8 +55,24 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
         return studentsRepository.findByAgeBetween(min, max);
     }
 
-    public Faculty getStudentsFaculty(long id) {
+    @Override
+    public Faculty getStudentsFaculty(Long id) {
         final Student student = get(id);
         return student.getFaculty();
+    }
+
+    @Override
+    public Integer getCountStudents() {
+        return studentsRepository.getCountStudents();
+    }
+
+    @Override
+    public Integer getaverageAgeStudents() {
+        return studentsRepository.getAverageAgeStudents();
+    }
+
+    @Override
+    public Collection<Student> getLastFiveStudents() {
+        return studentsRepository.getLastFiveStudents();
     }
 }
