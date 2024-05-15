@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("avatars")
@@ -26,6 +28,7 @@ public class AvatarController {
         this.avatarService = avatarService;
     }
 
+    // ---------------- GET REQUESts ----------- //
     @GetMapping("/{id}")
     @Operation(summary = "Получить оригинал аватара по id")
     public void getAvatar(
@@ -52,6 +55,17 @@ public class AvatarController {
         return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(avatar.getPreview());
     }
 
+    @GetMapping("/paginate/")
+    @Operation(summary = "Пагинация аватарок по page size")
+    public ResponseEntity<List<Avatar>> getPaginateAvatar(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size
+    ) {
+        List<Avatar> result = avatarService.getAvatarPaginate(page, size);
+        return ResponseEntity.ok(result);
+    }
+
+    // ---------------- POST REQUESts ----------- //
     @PostMapping(value = "/{studentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Загрузить аватар")
     public ResponseEntity<String> postAvatar(
