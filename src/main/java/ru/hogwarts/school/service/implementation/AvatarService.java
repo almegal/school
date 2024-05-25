@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service.implementation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class AvatarService {
     private final AvatarRepository avatarRepository;
     private final StudentSchoolServiceImpl studentSchoolService;
+    Logger logger = LoggerFactory.getLogger(Avatar.class);
     // получаем путь до аватаров из свойтсв приложения
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
@@ -32,16 +35,24 @@ public class AvatarService {
     }
 
     public List<Avatar> getAvatarPaginate(Integer page, Integer size) {
+        logger.info("Получить список аватарок в виде пагинации, метод getAvatarPaginate");
         PageRequest pageable = PageRequest.of(page - 1, size);
         return avatarRepository.findAll(pageable).getContent();
     }
 
     public Avatar getById(long id) {
-        return avatarRepository.findById(id).orElse(new Avatar());
+        logger.info("Получить аватарку по ID {}, метод getById", id);
+        return avatarRepository.findById(id)
+                .orElseGet(() -> {
+                    logger.error("Нет аватарки по ID {}", id);
+                    return new Avatar();
+                });
     }
 
     public void uploadAvatar(long id, MultipartFile avatarContent) throws IOException {
+        logger.info("Загрузить аватар. ID: {}, fileName: {}, метод uploadAvatar", id, avatarContent.getOriginalFilename());
         if (avatarContent.getOriginalFilename() == null) {
+            logger.error("Ошибка загрузки автарки. Имя файла отсутсвует. fileName: {}", avatarContent.getOriginalFilename());
             throw new RuntimeException("");
         }
         // получить студента по айди
@@ -71,10 +82,12 @@ public class AvatarService {
     }
 
     private String getExtension(String fileName) {
+        logger.debug("Получить расширение файла, метод getExtension");
         return fileName.substring(fileName.lastIndexOf('.') + 1);
     }
 
     private byte[] resizeAvatar(Path path) throws IOException {
+        logger.debug("Урезать размер аватара, метод resizeAvatar");
         //создаем стримы на чтение и запись
         try (InputStream is = Files.newInputStream(path);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
