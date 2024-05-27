@@ -9,7 +9,10 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.StudentsRepository;
 import ru.hogwarts.school.service.interfaces.SchoolServiceForStudent;
 
+import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student> {
@@ -93,5 +96,23 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
     public Collection<Student> getLastFiveStudents() {
         logger.info("Получить последних 5 студентов из БД, метод getLastFiveStudents");
         return studentsRepository.getLastFiveStudents();
+    }
+
+    public List<String> findAllStudentNameStartWithAUppercaseSorted() {
+        List<Student> students = studentsRepository.findAll();
+        return students.stream()
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .filter(name -> name.startsWith("A"))
+                .sorted()
+                .toList();
+    }
+
+    public Integer getAverageAgeByStream() {
+        List<Student> students = studentsRepository.findAll();
+        Optional<Integer> sum = students.stream()
+                .map(Student:: getAge)
+                .reduce(Integer::sum);
+        return sum.orElseThrow() / students.size();
     }
 }
