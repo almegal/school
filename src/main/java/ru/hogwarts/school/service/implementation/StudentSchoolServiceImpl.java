@@ -10,10 +10,12 @@ import ru.hogwarts.school.repositories.StudentsRepository;
 import ru.hogwarts.school.service.interfaces.SchoolServiceForStudent;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student> {
     private final StudentsRepository studentsRepository;
+    int count = 0;
     Logger logger = LoggerFactory.getLogger(StudentSchoolServiceImpl.class);
 
     public StudentSchoolServiceImpl(StudentsRepository studentsRepository) {
@@ -93,5 +95,52 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
     public Collection<Student> getLastFiveStudents() {
         logger.info("Получить последних 5 студентов из БД, метод getLastFiveStudents");
         return studentsRepository.getLastFiveStudents();
+    }
+
+    private synchronized void printSyncStudent(Student student) {
+        synchronized (new Object()) {
+            System.out.println(count);
+            System.out.println(Thread.currentThread().getName() + " " + student);
+            count++;
+        }
+    }
+
+    public void printSynchronized() {
+        List<Student> students = studentsRepository.findAll();
+
+        printSyncStudent(students.get(0));
+        printSyncStudent(students.get(1));
+
+        Runnable task1 = () -> {
+            printSyncStudent(students.get(2));
+            printSyncStudent(students.get(3));
+        };
+        Runnable task2 = () -> {
+            printSyncStudent(students.get(4));
+            printSyncStudent(students.get(5));
+        };
+
+        new Thread(task1).start();
+        new Thread(task2).start();
+    }
+
+    public void printParallel() {
+        List<Student> students = studentsRepository.findAll();
+
+        System.out.println(Thread.currentThread().getName() + " " + students.get(0));
+        System.out.println(Thread.currentThread().getName() + " " + students.get(1));
+
+        Runnable task1 = () -> {
+            System.out.println(Thread.currentThread().getName() + " " + students.get(2));
+            System.out.println(Thread.currentThread().getName() + " " + students.get(3));
+        };
+        Runnable task2 = () -> {
+            System.out.println(Thread.currentThread().getName() + " " + students.get(4));
+            System.out.println(Thread.currentThread().getName() + " " + students.get(5));
+        };
+
+        new Thread(task1).start();
+        new Thread(task2).start();
+
     }
 }

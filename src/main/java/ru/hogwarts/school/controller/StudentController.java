@@ -28,6 +28,20 @@ public class StudentController {
 
     }
 
+    @GetMapping("/print-parallel")
+    @Operation(summary = "Вывести в консоль имена всех студентов в параллельном режиме")
+    public ResponseEntity<String> printStudentsParallel() {
+        schoolService.printParallel();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/print-synchronized")
+    @Operation(summary = "Вывести в консоль имена всех студентов в синхронном режиме")
+    public ResponseEntity<String> printStudentsSynchronized() {
+        schoolService.printSynchronized();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}/faculty")
     @Operation(summary = "Получить факутльтет студента")
     public ResponseEntity<Faculty> getStudentsFaculty(@PathVariable("id") long id) {
