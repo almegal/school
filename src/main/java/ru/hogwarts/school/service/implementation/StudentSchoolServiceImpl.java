@@ -98,15 +98,16 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
     }
 
     private synchronized void printSyncStudent(Student student) {
-        synchronized (new Object()) {
-            System.out.println(count);
-            System.out.println(Thread.currentThread().getName() + " " + student);
-            count++;
-        }
+        System.out.println(count);
+        logger.info(String.valueOf(student));
+        count++;
     }
 
     public void printSynchronized() {
         List<Student> students = studentsRepository.findAll();
+        if (students.size() < 6) {
+            throw new RuntimeException("Size of Students List less than 6");
+        }
 
         printSyncStudent(students.get(0));
         printSyncStudent(students.get(1));
@@ -126,17 +127,20 @@ public class StudentSchoolServiceImpl implements SchoolServiceForStudent<Student
 
     public void printParallel() {
         List<Student> students = studentsRepository.findAll();
+        if (students.size() < 6) {
+            throw new RuntimeException("Size of Students List less than 6");
+        }
 
-        System.out.println(Thread.currentThread().getName() + " " + students.get(0));
-        System.out.println(Thread.currentThread().getName() + " " + students.get(1));
+        logger.info(String.valueOf(students.get(0)));
+        logger.info(String.valueOf(students.get(1)));
 
         Runnable task1 = () -> {
-            System.out.println(Thread.currentThread().getName() + " " + students.get(2));
-            System.out.println(Thread.currentThread().getName() + " " + students.get(3));
+            logger.info(String.valueOf(students.get(2)));
+            logger.info(String.valueOf(students.get(3)));
         };
         Runnable task2 = () -> {
-            System.out.println(Thread.currentThread().getName() + " " + students.get(4));
-            System.out.println(Thread.currentThread().getName() + " " + students.get(5));
+            logger.info(String.valueOf(students.get(4)));
+            logger.info(String.valueOf(students.get(5)));
         };
 
         new Thread(task1).start();
